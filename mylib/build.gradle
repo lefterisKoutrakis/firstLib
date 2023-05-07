@@ -5,14 +5,14 @@ plugins {
 }
 
 
-publishing {
+/*publishing {
 
     repositories {
         maven{
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/lefterisKoutrakis/firstLib")
             credentials {
-                username = System.getenv("GITHUB_ACTOR ")
+                username = System.getenv("GITHUB_ACTOR")
                 password = System.getenv("GITHUB_TOKEN")
             }
         }
@@ -22,7 +22,7 @@ publishing {
             artifact("$buildDir/outputs/aar/${artifactId}-debug.aar")
         }
     }
-}
+}*/
 
 android {
     namespace 'gr.koutro.mylib'
