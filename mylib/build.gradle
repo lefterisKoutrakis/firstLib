@@ -15,8 +15,8 @@ android {
     defaultConfig {
         minSdk 24
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -52,15 +52,17 @@ dependencies {
 
 afterEvaluate{
     android.libraryVariants.each{ variant ->
-        publishing.publications.create(variant.name, MavenPublication){
-            from components.findByName(variant.name)
+        if (variant.name == "release"){
+            publishing.publications.create(variant.name, MavenPublication) {
+                from components.findByName(variant.name)
 
-           // artifact androidJavadocsJar
-          //  artifact androidSourcesJar
+                // artifact androidJavadocsJar
+                //  artifact androidSourcesJar
 
-            groupId 'gr.koutro.testlib'
-            artifactId = 'testlib'
-            version '1.0.0'
+                groupId 'gr.koutro.testlib'
+                artifactId = 'testlib'
+                version '1.0.1'
+            }
         }
     }
 }
