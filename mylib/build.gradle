@@ -1,0 +1,109 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'maven-publish'
+}
+
+/*
+publishing {
+
+    repositories {
+        maven{
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/lefteriskoutrakis/firstLib")
+            credentials {
+                username = System.getenv("lefteriskoutrakis")
+                password = System.getenv("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")
+            }
+        }
+    }
+    publications{
+        firstLib(MavenPublication){
+            artifact("$buildDir/outputs/aar/${artifactId}-debug.aar")
+        }
+    }
+}
+*/
+android {
+    namespace 'gr.koutro.mylib'
+    compileSdk 33
+
+    testFixtures {
+        enable = true
+    }
+
+    defaultConfig {
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        aarMetadata{
+            minCompileSdk = 24
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.10.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+afterEvaluate{
+    android.libraryVariants.each{ variant ->
+        publishing.publications.create(variant.name, MavenPublication){
+            from components.findByName(variant.name)
+
+           // artifact androidJavadocsJar
+          //  artifact androidSourcesJar
+
+            groupId 'gr.koutro.testlib'
+            artifactId = 'testlib'
+            version '1.0.0'
+        }
+    }
+}
+
+task androidJavadocs(type:Javadoc){
+    source = android.sourceSets.main.java.srcDirs
+
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    android.libraryVariants.all{
+        owner.classpath += it.javaCompileProvider.get().classpath
+    }
+
+    options{
+        memberLevel = JavadocMemberLevel.PROTECTED
+    }
+}
+
+task androidJavadocsJar(type:Jar, dependsOn:androidJavadocs){
+    archiveClassifier.set('javadoc')
+    from androidJavadocs.destinationDir
+}
+
+task androidSourcesJar(type: Jar){
+    archiveClassifier.set('sources')
+    from android.sourceSets.main.java.srcDirs
+}
